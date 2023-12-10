@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Recipe Book</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f4;
+        }
+
+        #recipe-container {
+            max-width: 1000px;
+            margin: 20px auto;
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        #recipe-list {
+            list-style-type: none;
+            padding: 0;
+        }
+
+        .recipe {
+            margin-bottom: 10px;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            background-color: #fff;
+        }
+
+        .recipe button {
+            margin-left: 10px;
+        }
+
+        #recipe-form {
+            display: none;
+            margin-top: 20px;
+        }
+
+        input, textarea {
+            margin-bottom: 10px;
+            width: 100%;
+            padding: 8px;
+            box-sizing: border-box;
+        }
+
+        button {
+            padding: 8px 16px;
+            background-color: #4caf50;
+            color: #fff;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        button.cancel {
+            background-color: #ccc;
+        }
+    </style>
+</head>
+<body>
+
+<div id="recipe-container">
+    <h1>Recipe Book</h1>
+    <ul id="recipe-list"></ul>
+    <button onclick="showRecipeForm()">Add Recipe</button>
+    <div id="recipe-form">
+        <h2>Add/Edit Recipe</h2>
+        <form>
+            <label for="recipe-name">Recipe Name:</label>
+            <input type="text" id="recipe-name" required>
+            <label for="recipe-ingredients">Ingredients:</label>
+            <textarea id="recipe-ingredients" required></textarea>
+            <label for="recipe-instructions">Instructions:</label>
+            <textarea id="recipe-instructions" required></textarea>
+            <button type="button" onclick="saveRecipe()">Save Recipe</button>
+            <button type="button" class="cancel" onclick="cancelForm()">Cancel</button>
+        </form>
+    </div>
+</div>
+
+<script>
+    let recipes = [];
+
+    function renderRecipes() {
+        const recipeList = document.getElementById("recipe-list");
+        recipeList.innerHTML = "";
+        recipes.forEach((recipe, index) => {
+            const li = document.createElement("li");
+            li.className = "recipe";
+            li.innerHTML = `
+                <strong>${recipe.name}</strong>
+                <p><em>Ingredients:</em> ${recipe.ingredients}</p>
+                <p><em>Instructions:</em> ${recipe.instructions}</p>
+                <button onclick="editRecipe(${index})">Edit</button>
+                <button onclick="deleteRecipe(${index})">Delete</button>
+            `;
+            recipeList.appendChild(li);
+        });
+    }
+
+    function showRecipeForm() {
+        const form = document.getElementById("recipe-form");
+        form.style.display = "block";
+        clearForm();
+    }
+
+    function cancelForm() {
+        const form = document.getElementById("recipe-form");
+        form.style.display = "none";
+        clearForm();
+    }
+
+    function clearForm() {
+        document.getElementById("recipe-name").value = "";
+        document.getElementById("recipe-ingredients").value = "";
+        document.getElementById("recipe-instructions").value = "";
+    }
+
+    function saveRecipe() {
+        const name = document.getElementById("recipe-name").value;
+        const ingredients = document.getElementById("recipe-ingredients").value;
+        const instructions = document.getElementById("recipe-instructions").value;
+
+        if (name && ingredients && instructions) {
+            const recipe = { name, ingredients, instructions };
+            recipes.push(recipe);
+            renderRecipes();
+            cancelForm();
+        } else {
+            alert("Please fill in all fields.");
+        }
+    }
+
+    function editRecipe(index) {
+        const recipe = recipes[index];
+        document.getElementById("recipe-name").value = recipe.name;
+        document.getElementById("recipe-ingredients").value = recipe.ingredients;
+        document.getElementById("recipe-instructions").value = recipe.instructions;
+
+        recipes.splice(index, 1);
+        renderRecipes();
+        showRecipeForm();
+    }
+
+    function deleteRecipe(index) {
+        recipes.splice(index, 1);
+        renderRecipes();
+    }
+
+    // Initial rendering
+    renderRecipes();
+</script>
+
+</body>
+</html>
